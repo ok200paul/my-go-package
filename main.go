@@ -4,6 +4,7 @@ import (
     "context"
     _ "embed"
     "errors"
+    "log"
 
     runlicense "github.com/runlicense/sdk-go"
 )
@@ -14,11 +15,16 @@ var publicKey string
 var ErrUnlicensed = errors.New("my-go-package: license verification failed")
 
 var licenseErr error
+var license *runlicense.License
 
 func init() {
-    _, err := runlicense.Activate(context.Background(), "ok200paul/my-go-package", publicKey)
+    l, err := runlicense.Activate(context.Background(), "ok200paul/my-go-package", publicKey)
     if err != nil {
         licenseErr = ErrUnlicensed
+    }
+    license = l
+    if license != nil {
+        log.Printf("Licensed to: %s", license.CustomerID)
     }
 }
 
