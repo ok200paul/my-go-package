@@ -15,7 +15,7 @@ var publicKey string
 var ErrUnlicensed = errors.New("my-go-package: license verification failed")
 
 var licenseErr error
-var license *runlicense.License
+var license *runlicense.LicensePayload
 
 func init() {
     l, err := runlicense.Activate(context.Background(), "ok200paul/my-go-package", publicKey)
