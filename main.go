@@ -4,6 +4,7 @@ import (
     "context"
     _ "embed"
     "errors"
+    "fmt"
     "log"
 
     runlicense "github.com/runlicense/sdk-go"
@@ -20,7 +21,12 @@ var license *runlicense.LicensePayload
 func init() {
     l, err := runlicense.Activate(context.Background(), "ok200paul/my-go-package", publicKey)
     if err != nil {
-        licenseErr = ErrUnlicensed
+        var licErr *runlicense.LicenseError
+        if errors.As(err, &licErr) {
+            licenseErr = fmt.Errorf("%w: %s", ErrUnlicensed, licErr.Message)
+        } else {
+            licenseErr = ErrUnlicensed
+        }
     }
     license = l
     if license != nil {
