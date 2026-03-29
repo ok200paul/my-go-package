@@ -5,7 +5,7 @@ import (
     _ "embed"
     "errors"
     "fmt"
-    "log"
+    "log/slog"
 
     runlicense "github.com/runlicense/sdk-go"
 )
@@ -15,31 +15,45 @@ var publicKey string
 
 var ErrUnlicensed = errors.New("my-go-package: license verification failed")
 
-var licenseErr error
-var license *runlicense.LicensePayload
+type Option func(*options)
 
-func init() {
-    l, err := runlicense.Activate(context.Background(), "ok200paul/my-go-package", publicKey)
-    if err != nil {
-        var licErr *runlicense.LicenseError
-        if errors.As(err, &licErr) {
-            licenseErr = fmt.Errorf("%w: %s", ErrUnlicensed, licErr.Message)
-        } else {
-            licenseErr = ErrUnlicensed
-        }
-    }
-    license = l
-    if license != nil {
-        log.Printf("Licensed to: %s", license.CustomerID)
+type options struct {
+    logger *slog.Logger
+}
+
+// WithLogger enables verbose logging of the license verification pipeline.
+func WithLogger(l *slog.Logger) Option {
+    return func(o *options) {
+        o.logger = l
     }
 }
 
 type Client struct{}
 
-func New() (*Client, error) {
-    if licenseErr != nil {
-        return nil, licenseErr
+func New(opts ...Option) (*Client, error) {
+    var o options
+    for _, fn := range opts {
+        fn(&o)
     }
+
+    var rlOpts []runlicense.Option
+    if o.logger != nil {
+        rlOpts = append(rlOpts, runlicense.WithLogger(o.logger))
+    }
+
+    result, err := runlicense.Activate(context.Background(), "ok200paul/my-go-package", publicKey, rlOpts...)
+    if err != nil {
+        var licErr *runlicense.LicenseError
+        if errors.As(err, &licErr) {
+            return nil, fmt.Errorf("%w: %s", ErrUnlicensed, licErr.Error())
+        }
+        return nil, ErrUnlicensed
+    }
+
+    if o.logger != nil {
+        o.logger.Info("licensed", "customer_id", result.License.CustomerID)
+    }
+
     return &Client{}, nil
 }
 
