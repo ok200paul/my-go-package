@@ -1,2 +1,4 @@
-github.com/runlicense/sdk-go v0.0.0-20260315074618-2a1d7c08ecbc h1:RXRYNoDN1Hyvk7xNZcPCroXyIOQq7ITHZtDtEWVf2l4=
-github.com/runlicense/sdk-go v0.0.0-20260315074618-2a1d7c08ecbc/go.mod h1:VWcAtGu/plOMSuhrehMB2EveM4yUlskyPC7cWRU5OXQ=
+github.com/runlicense/sdk-go v0.1.1 h1:O1XEOJ0wIcQ0ptaxJmDq9JiMvZzhxgLy5jTO2x6OYqI=
+github.com/runlicense/sdk-go v0.1.1/go.mod h1:VWcAtGu/plOMSuhrehMB2EveM4yUlskyPC7cWRU5OXQ=
+github.com/runlicense/sdk-go v0.2.0 h1:FrwsbQ/vfHg55olAjxXa726TWtKPjsO9/yZ30vQJbl0=
+github.com/runlicense/sdk-go v0.2.0/go.mod h1:VWcAtGu/plOMSuhrehMB2EveM4yUlskyPC7cWRU5OXQ=
